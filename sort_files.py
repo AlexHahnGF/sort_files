@@ -105,7 +105,11 @@ def replace_files(files: list, new_path: str) -> None:
 # main method of the script
 def main():
     files = categorize_files(get_all_files("old_location"))
-    replace_files(files, "C:\\python_tests\\folders\\new_location")
+    # create result folder to place files into
+    curr_path = os.path.join(os.getcwd(), "00-bearbeitet")
+    if not os.path.exists(curr_path):
+        os.makedirs(curr_path)
+    replace_files(files, str(curr_path))
 
 
 
