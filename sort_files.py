@@ -3,10 +3,12 @@ from logging import FileHandler
 from logging import Formatter
 import os
 import shutil
+from tqdm import tqdm
+import datetime
 
 # global constants
 KEYWORDS = ["zeugniss", "xml", "xlsx"]
-DEBUG = True
+DEBUG = False
 
 # set the logger settings
 FULL_LOG_FILE = "full_log.txt"
@@ -24,9 +26,11 @@ error_log.addHandler(error_log_handler)
 # get all files in dirs by the path given as path: str
 # forms and return a dict in form {folder:[files]}
 def get_all_files(path: str)-> dict:
+    print(f'{str(datetime.datetime.now())}: Suche nach Ordnern... ')
     files_dict = {}
     folders = [ f.path for f in os.scandir(os.path.join(os.getcwd(),path)) if f.is_dir() ]
-    for folder in folders:
+    for folder in tqdm(folders, desc="Suchen nach Datein in Ordnern"):
+    # for folder in folders:
         files_dict[folder] = [ f.path for f in os.scandir(folder) if f.is_file() ]
     return files_dict
 
@@ -40,7 +44,8 @@ def categorize_files(folders: dict) -> list:
     if DEBUG:
         [print(k,v) for k,v in folders.items()]
     categorized_lsit = []
-    for folder, files in folders.items():
+    print(f"{str(datetime.datetime.now())}: Dateisortierung...")
+    for folder, files in tqdm(folders.items(), desc=f"Bearbeitete Ordner"):
         if files:
             for file in files:
                 category = create_category(file=file)
@@ -75,7 +80,8 @@ def create_category(file: str) -> str:
 def replace_files(files: list, new_path: str) -> None:
     if DEBUG:
         [print(x) for x in files]
-    for item in files:
+    print(f"{str(datetime.datetime.now())}: Kopieren von Dateien...")
+    for item in tqdm(files, desc="Dateien"):
         existing_files = []
         new_folder = os.path.join(new_path, item['user'])
         new_category_folder = os.path.join(new_path, new_folder, item['category'])
@@ -110,6 +116,8 @@ def main():
     if not os.path.exists(curr_path):
         os.makedirs(curr_path)
     replace_files(files, str(curr_path))
+    print(f"{str(datetime.datetime.now())}: Erfolg! Alle Datein sind Sortiert")
+    input(f"Zum Beenden eine belibige Taste eingeben: ")
 
 
 
