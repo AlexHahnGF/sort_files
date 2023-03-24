@@ -63,7 +63,7 @@ def generate_userdefined_keywords()->dict:
             end_input = True
     print("Folgende Ordner werden erstellt:")
     [print(f"Ordner:{k}, Schlüsselwörter für den Ordner:{v}") for k,v in keywords_dict.items()]
-    input("Drücken Sie die Eingabetaste, um fortzufahren oder strg+C um das Script abzubrechen.")
+    input("Drücken Sie die Eingabetaste, um fortzufahren oder schließen Sie das Programm, um den Vorgang abzubrechen.")
     return keywords_dict
 
 
