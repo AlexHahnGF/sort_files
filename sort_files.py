@@ -24,9 +24,9 @@ error_log.addHandler(error_log_handler)
 
 
 
-def get_all_files(path: str)-> dict:
+def get_all_files()-> dict:
     """
-    get all files in dirs by the path given as path: str
+    get all files from the current directory
     forms and return a dict in form {folder:[files]}
     """
     print(f'{str(datetime.datetime.now())}: Suche nach Ordnern... ')
@@ -149,7 +149,7 @@ def replace_files(files: list, new_path: str) -> None:
 # main method of the script
 def main():
     keywords = generate_userdefined_keywords()
-    files = categorize_files(folders=get_all_files("old_location"), keywords=keywords)
+    files = categorize_files(folders=get_all_files(), keywords=keywords)
     # create result folder to place files into
     curr_path = os.path.join(os.getcwd(), "00-bearbeitet")
     if not os.path.exists(curr_path):
