@@ -24,14 +24,14 @@ error_log.addHandler(error_log_handler)
 
 
 
-def get_all_files()-> dict:
+def get_all_files()-> dict[str,list[str]]:
     """
-    get all files from the current directory
+    get all files in current directory
     forms and return a dict in form {folder:[files]}
     """
     print(f'{str(datetime.datetime.now())}: Suche nach Ordnern... ')
     files_dict = {}
-    folders = [ f.path for f in os.scandir(os.path.join(os.getcwd(),path)) if f.is_dir() ]
+    folders = [ f.path for f in os.scandir(os.getcwd()) if f.is_dir() ]
     for folder in tqdm(folders, desc="Suchen nach Datein in Ordnern"):
     # for folder in folders:
         files_dict[folder] = [ f.path for f in os.scandir(folder) if f.is_file() ]
@@ -39,7 +39,7 @@ def get_all_files()-> dict:
 
 
 
-def generate_userdefined_keywords()->dict:
+def generate_userdefined_keywords()->dict[str,list[str]]:
     """
     creates dict with folder:[keywords], defined by the user
     to sort files according this dict further
@@ -47,7 +47,7 @@ def generate_userdefined_keywords()->dict:
     keywords_dict = {}
     end_input = False
     while not end_input:
-        folder = input("Bitte geben Sie den Namen des Ordners ohne Leer- und Soner-zeichen ein: ")
+        folder = input("Bitte geben Sie den Namen des Ordners ohne Leer- und Sonder-zeichen ein: ")
         folder = folder.replace(" ",'')
         print(f"Bitte geben Sie Schlüsselwörter für den angegebenen Ordner ohne Leerzeichen und mit Komma getrennt ein\n" +
         "z.B: keyword1,keyword2,keyword3")
@@ -62,13 +62,13 @@ def generate_userdefined_keywords()->dict:
         if end == "n":
             end_input = True
     print("Folgende Ordner werden erstellt:")
-    [print(f"Ordner:{k}, Schlüsselwörter für den Ordner:{v}") for k,v in keywords_dict.items()]
+    [ print(f"Ordner:{k}, Schlüsselwörter für den Ordner:{v}") for k,v in keywords_dict.items() ]
     input("Drücken Sie die Eingabetaste, um fortzufahren oder schließen Sie das Programm, um den Vorgang abzubrechen.")
     return keywords_dict
 
 
 
-def categorize_files(folders: dict, keywords: dict) -> list:
+def categorize_files(folders: dict, keywords: dict) -> list[dict[str,str,str,str,str]]:
     """
     categorize files by the given keywords in KEYWORDS list
     get the dict formed with get_all_files func as argument
@@ -76,7 +76,7 @@ def categorize_files(folders: dict, keywords: dict) -> list:
     returs a list of dicts in form {"category":category, "file":file, "folder":folder, "user":username, "filename":filename}
     """
     if DEBUG:
-        [print(k,v) for k,v in folders.items()]
+        [ print(k,v) for k,v in folders.items() ]
     categorized_lsit = []
     print(f"{str(datetime.datetime.now())}: Dateisortierung...")
     for folder, files in tqdm(folders.items(), desc=f"Bearbeitete Ordner"):
@@ -87,7 +87,13 @@ def categorize_files(folders: dict, keywords: dict) -> list:
                     error_log.error(f'Datei: "{file}" kann nicht zugewiesen werden!')
                 filename = os.path.basename(file)
                 username = os.path.basename(folder)
-                categorized_lsit.append({"category":category, "file":file, "folder":folder, "user":username, "filename":filename})
+                categorized_lsit.append(
+                    {"category":category,
+                     "file":file,
+                     "folder":folder,
+                     "user":username,
+                     "filename":filename}
+                     )
         else:
             error_log.error(f'Ordner: {folder} enthält keine Dateien')
     return categorized_lsit
